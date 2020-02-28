@@ -32,9 +32,10 @@ export default function AnimalForm({ animals, updateAnimals }) {
 
   const deleteAnimal = animal => {
     axiosWithAuth()
-      .delete(`animals/${animalToUpdate.id}`)
+      .delete(`animals/${animalToUpdate.id}`, animal)
       .then(res => {
         console.log(res);
+        updateAnimals(animals.filter(an => an.id !== animalToUpdate.id));
       })
       .catch(err => {
         console.log(err);
@@ -44,23 +45,14 @@ export default function AnimalForm({ animals, updateAnimals }) {
   return (
     <div className="animals-list">
       <ul className="organized">
+        <span>click on animal to EDIT</span>
         {animals.map(animal => (
           <li
             key={animal.name}
             onClick={() => editAnimal(animal)}
             className="edit-animals"
           >
-            <span>
-              <span
-                onClick={e => {
-                  e.stopPropagation();
-                  deleteAnimal(animal);
-                }}
-              >
-                X
-              </span>{" "}
-              {animal.name}
-            </span>
+            <span>{animal.name}</span>
           </li>
         ))}
       </ul>
@@ -100,6 +92,16 @@ export default function AnimalForm({ animals, updateAnimals }) {
           <div>
             <button type="submit">Update</button>
             <button onClick={() => setUpdating(false)}>Cancel</button>
+            {
+              <button
+                onClick={e => {
+                  e.stopPropagation();
+                  deleteAnimal(animalToUpdate);
+                }}
+              >
+                X
+              </button>
+            }
           </div>
         </form>
       )}
